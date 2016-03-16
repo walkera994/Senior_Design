@@ -5,8 +5,8 @@
    Purpose: define register addresses and values used for reading TCS3472
 */
 
-#ifndef _COLOR_SENSOR_H_
-#define _COLOR_SENSOR_H_
+#ifndef _FEEDER_MOTOR_H_
+#define _FEEDER_MOTOR_H_
 
 #if ARDUINO >= 100
 #include <Arduino.h>
@@ -22,4 +22,6 @@ void FEEDER_MOTOR_STATE_FORWARD      (uint16_t FEEDER_MOTOR_DUTY_CYCLE);
 void FEEDER_MOTOR_STATE_REVERSE      (uint16_t FEEDER_MOTOR_DUTY_CYCLE);
 void FEEDER_MOTOR_STATE_BRAKE        (void);
 void FEEDER_MOTOR_CURRENT_SENSE      (void);
+
+#endif
 
