@@ -8,15 +8,13 @@
 #include "Color_Sensor.h"
 #include "Common.h"
 
-void COLOR_SENSOR_LED_DC(uint8_t DC){
-  pinMode(COLOR_SENSOR_LED_PIN, OUTPUT);
-  analogWrite(COLOR_SENSOR_LED_PIN, DC);
-}
 boolean COLOR_SENSOR_INITIALIZE(void) {
   uint8_t LOCAL_ID_CHECK = 0;
+  pinMode(COLOR_SENSOR_POWER_PIN, OUTPUT);    // Power Pin for sensor
   pinMode(COLOR_SENSOR_LED_PIN, OUTPUT);      // Power pin for LED
-  analogWriteResolution(COLOR_SENSOR_LED_RESOLUTION);       
-  analogWrite(COLOR_SENSOR_LED_PIN, COLOR_SENSOR_LED_DUTY_CYCLE);      
+  analogWriteResolution(12);                  // 12 bit PWM
+  analogWrite(COLOR_SENSOR_LED_PIN, 64);      // Duty Cycle = 64/(2^12-1)
+  digitalWrite(COLOR_SENSOR_POWER_PIN, HIGH); // Turn on power for sensor
   Wire.begin(COLOR_SENSOR_ADDRESS);           // Initialize the color sensor on I2C bus to COLOR_SENSOR_ADDRESS (0x29)
   LOCAL_ID_CHECK = COLOR_SENSOR_READ_BYTES(COLOR_SENSOR_ADDRESS, 1);  
   if (!((LOCAL_ID_CHECK = 0x44) || (LOCAL_ID_CHECK = 0x10))) {
@@ -35,6 +33,13 @@ boolean COLOR_SENSOR_INITIALIZE(void) {
   return true;
 }
 
+void COLOR_SENSOR_POWER_OFF (void) {
+  pinMode(COLOR_SENSOR_POWER_PIN, OUTPUT); 
+  pinMode(COLOR_SENSOR_LED_PIN, OUTPUT); 
+  analogWriteResolution(12);
+  digitalWrite(COLOR_SENSOR_POWER_PIN, LOW);
+  analogWrite(COLOR_SENSOR_LED_PIN, 0);
+}
 
 
 /**************************************************************************/
