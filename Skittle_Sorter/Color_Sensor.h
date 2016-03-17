@@ -145,6 +145,9 @@
 #define COLOR_SENSOR_BDATAL						0x1A	// R For reading blue channel
 #define COLOR_SENSOR_BDATAH						0x1B	// R
 
+#define COLOR_SENSOR_LED_RESOLUTION   8 //8 bit PWM for LED
+#define COLOR_SENSOR_LED_DUTY_CYCLE           26 //max is 255
+
 
 boolean COLOR_SENSOR_INITIALIZE (void);
 void COLOR_SENSOR_POWER_OFF (void);

@@ -1,12 +1,7 @@
-/*
- * Author: Alex Chou
- * Revision: 0.1.0
- * Requires: TBD 
- * Modifies: TBD
- * Effects: TBD
- */
-
+#ifdef __AVR
+  #include <avr/pgmspace.h>
+#elif defined(ESP8266)
+  #include <pgmspace.h>
+#endif
+#include <stdlib.h>
 #include "LCD_Display.h"
-
-
-
