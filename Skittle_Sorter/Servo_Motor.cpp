@@ -4,13 +4,8 @@
   #include <pgmspace.h>
 #endif
 #include <stdlib.h>
-#include "Common.h"
+#include "Servo_Motor.h"
 
 
-void setup() {
 
-}
 
-void loop() {
-
-}

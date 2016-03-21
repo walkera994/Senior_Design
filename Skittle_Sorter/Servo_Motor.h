@@ -5,8 +5,8 @@
    Purpose: define register addresses and values used for reading TCS3472
 */
 
-#ifndef _SOLENOID_LOGIC_H_
-#define _SOLENOID_LOGIC_H_
+#ifndef _SERVO_MOTOR_H_
+#define _SERVO_MOTOR_H_
 
 #if ARDUINO >= 100
 #include <Arduino.h>
@@ -14,10 +14,10 @@
 #include <WProgram.h>
 #endif
 
-
 #include "Common.h"
 
+#define SERVO_MOTOR_ADC_RESOLUTION   8    //Must be 8-12 bits. If changed, adjust .cpp accordingly
 
-void SOLENOID_LOGIC_ACTUATE_SOLENOID(uint8_t SOLENOID_NUMBER);
 
 #endif
+
