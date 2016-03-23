@@ -1,4 +1,5 @@
-
+#ifndef _COMMON_H_
+#define _COMMON_H_
 
 // COLOR SENSOR PARAMETERS --------------------------------------------------
 #define COLOR_SENSOR_LED_PIN              2
@@ -11,11 +12,9 @@
 #define SOLENOID_FIVE   28
 
 // BELT MOTOR PARAMETERS ----------------------------------------------------
-#define BELT_MOTOR_PIN 13
-#define ENCODER_PIN_0   20
-#define ENCODER_PIN_1   21
-#define ENCODER_PIN_2   22
-#define ENCODER_PIN_3   23
+#define BELT_MOTOR_PIN  13
+#define ENCODER_PIN_A   14
+#define ENCODER_PIN_B   15
 
 // FEEDER MOTOR PARAMETERS --------------------------------------------------
 #define FEEDER_MOTOR_BRIDGE_IN_PWM 3
@@ -36,4 +35,4 @@
 // SERVO MOTOR PARAMETERS --------------------------------------------------
 #define SERVO_PWM_PIN 6
 
-
+#endif
