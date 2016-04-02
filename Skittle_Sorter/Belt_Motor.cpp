@@ -8,11 +8,15 @@
 #include "Belt_Motor.h"
 
 
+uint16_t LAST_TIME = 0;
+uint16_t CURRENT_TIME = 0;
+uint16_t ENCODER_COUNT = 0;
+uint8_t BELT_MOTOR_PID_OUTPUT = 0;
+uint16_t BELT_MOTOR_SPEED = 0;
+
 void BELT_MOTOR_INITIALIZE(void){
-  attachInterrupt((digitalPinToInterrupt(ENCODER_PIN_0)), BELT_MOTOR_ISR, LOW);
-  attachInterrupt((digitalPinToInterrupt(ENCODER_PIN_1)), BELT_MOTOR_ISR, LOW);
-  attachInterrupt((digitalPinToInterrupt(ENCODER_PIN_2)), BELT_MOTOR_ISR, LOW);
-  attachInterrupt((digitalPinToInterrupt(ENCODER_PIN_3)), BELT_MOTOR_ISR, LOW);
+  attachInterrupt((digitalPinToInterrupt(ENCODER_PIN_A)), BELT_MOTOR_ISR, RISING);
+  attachInterrupt((digitalPinToInterrupt(ENCODER_PIN_B)), BELT_MOTOR_ISR, RISING);
 }
 
 void BELT_MOTOR_ISR(void){
@@ -30,7 +34,7 @@ void BELT_MOTOR_PI_INITIALIZE(void){
 
 void BELT_MOTOR_SET_PWM(uint8_t DC){
   pinMode(BELT_MOTOR_PIN, OUTPUT);
-  analogWriteResolution(BELT_MOTOR_ADC_RESOLUTION);
+  analogWriteResolution(ANALOG_RESOLUTION);
   analogWrite(BELT_MOTOR_PIN, DC);
 }
 

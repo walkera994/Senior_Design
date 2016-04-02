@@ -7,9 +7,6 @@
 #include "Photo_Resistor.h"
 
 boolean PHOTO_RESISTOR_READ(uint8_t COLOR){
-  if (COLOR > 5) {
-    return false;
-  }
   uint8_t LIGHT_READ_VALUE = 0;
   LIGHT_READ_VALUE = analogRead(COLOR);
   if (LIGHT_READ_VALUE > 128) {
