@@ -34,6 +34,9 @@ volatile uint16_t GLB_GMAX;
 volatile uint16_t GLB_RMAX;
 volatile uint16_t GLB_BMAX;
 volatile uint16_t GLB_CMAX;
+volatile uint16_t REV_COUNT = 0;
+volatile uint16_t SEC_COUNT = 0;
+volatile uint16_t RPM = 0;
 Servo myservo;
 
 void MAIN_ISR()
@@ -42,7 +45,7 @@ void MAIN_ISR()
   uint16_t RED;
   uint16_t BLUE;
   uint16_t CLEAR;
- COLOR_SENSOR_READ_COLOR_DATA(&RED, &GREEN, &BLUE, &CLEAR);
+  COLOR_SENSOR_READ_COLOR_DATA(&RED, &GREEN, &BLUE, &CLEAR);
   if (GBL_CLEAR == 0) {
   GLB_GMIN = GREEN;
   GLB_RMIN = RED;
@@ -75,6 +78,18 @@ void MAIN_ISR()
   Serial.print("Bmin: "); Serial.print(GLB_BMIN, DEC); Serial.print(" ");
   Serial.print("Cmin: "); Serial.print(GLB_CMIN, DEC); Serial.print(" ");
   Serial.println(" ");
+  if (SEC_COUNT == 3000) {  // 1 minute
+    RPM = REV_COUNT;   // RPM calculation
+    SEC_COUNT = 0;
+    REV_COUNT = 0;
+    Serial.print("RPM = ");
+    Serial.println(RPM);
+  }
+  SEC_COUNT++;
+}
+
+void HALL_SENSOR_ISR() {
+  REV_COUNT++;    
 }
 
 void setup(void) {
@@ -88,8 +103,7 @@ void setup(void) {
   myservo.write(180);  
   pinMode(8, OUTPUT);
   digitalWrite(8, LOW);
-    
-  
+  //attachInterrupt(digitalPinToInterrupt(HALL_SENSOR_PIN), HALL_SENSOR_ISR, FALLING);
 }
 
 void loop(void) {

@@ -34,5 +34,6 @@
 
 // SERVO MOTOR PARAMETERS --------------------------------------------------
 #define SERVO_PIN 9
+#define HALL_SENSOR_PIN 24
 
 
