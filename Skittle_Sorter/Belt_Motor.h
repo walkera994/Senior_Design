@@ -16,11 +16,7 @@
 
 #include "Common.h"
 
-uint16_t LAST_TIME;
-uint16_t CURRENT_TIME;
-uint16_t ENCODER_COUNT;
-uint8_t BELT_MOTOR_PID_OUTPUT;
-uint16_t BELT_MOTOR_SPEED;
+
 
 
 #define BELT_MOTOR_RATIO    100 //Ratio of RPMs and linear velocity ie 1 RPM = 10cm/s

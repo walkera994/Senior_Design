@@ -19,6 +19,6 @@
 
 
 void SOLENOID_LOGIC_ACTUATE_SOLENOID(uint8_t SOLENOID_NUMBER);
-void SOLENOID_LOGIC_INITIALIZE(void);
+static void tc_waveform_initialize(void);
 
 #endif
