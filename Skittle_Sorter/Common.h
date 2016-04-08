@@ -36,4 +36,11 @@
 #define SERVO_PIN 9
 #define HALL_SENSOR_PIN 24
 
+// SKITTLES PARAMETERS -----------------------------------------------------
+#define TIME_TO_BIN_1 1
+#define TIME_TO_BIN_2 2
+#define TIME_TO_BIN_3 3
+#define TIME_TO_BIN_4 4
+#define TIME_TO_BIN_5 5
+
 

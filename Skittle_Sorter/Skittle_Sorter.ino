@@ -16,6 +16,7 @@
 #include "LCD_Display.h"
 #include "Photo_Resistor.h"
 #include "Solenoid_Logic.h"
+#include "Skittles.h"
 
 uint16_t GREENL;
 uint16_t REDL;
@@ -37,7 +38,14 @@ volatile uint16_t GLB_CMAX;
 volatile uint16_t REV_COUNT = 0;
 volatile uint16_t SEC_COUNT = 0;
 volatile uint16_t RPM = 0;
+volatile uint16_t COLOR_FLAG = 0;
 Servo myservo;
+// SKITTLES SETUP ------------------------------------------------------------------------
+Bins *BIN1;
+Bins *BIN2;
+Bins *BIN3;
+Bins *BIN4;
+Bins *BIN5;
 
 void MAIN_ISR()
 {
@@ -45,8 +53,36 @@ void MAIN_ISR()
   uint16_t RED;
   uint16_t BLUE;
   uint16_t CLEAR;
+  uint16_t AVG;
   COLOR_SENSOR_READ_COLOR_DATA(&RED, &GREEN, &BLUE, &CLEAR);
-  if (GBL_CLEAR == 0) {
+
+  AVG = (RED + BLUE + GREEN) / 3;
+  RED = (RED * 100) / AVG;
+  BLUE = (BLUE * 100) / AVG;
+  GREEN = (GREEN * 100) / AVG;
+  //Serial.println(AVG);
+  //Serial.print("RED: "); Serial.println(RED, DEC);
+  //Serial.print("GREEN: "); Serial.println(GREEN, DEC);
+  //Serial.print("BLUE: "); Serial.println(BLUE, DEC);
+  if ((GREEN > 110) & (RED > 125) & (BLUE < 55)) {
+    if (COLOR_FLAG != 1) {
+      COLOR_FLAG = 1; 
+      Serial.println("YELLOW");
+    }
+  } else if ((GREEN < 80) & (RED > 140) & (BLUE < 80) & (AVG > 400)){
+    if (COLOR_FLAG != 1) {
+      COLOR_FLAG = 1; 
+      Serial.println("RED"); //1111 
+    }
+  } else {
+    COLOR_FLAG = 0;
+  }
+  /*
+  Serial.print("RED: "); Serial.println(RED, DEC);
+  Serial.print("GREEN: "); Serial.println(GREEN, DEC);
+  Serial.print("BLUE: "); Serial.println(BLUE, DEC);
+  Serial.println("CLEAR: "); Serial.println(CLEAR, DEC);
+  /*if (GBL_CLEAR == 0) {
   GLB_GMIN = GREEN;
   GLB_RMIN = RED;
   GLB_BMIN = BLUE;
@@ -78,6 +114,7 @@ void MAIN_ISR()
   Serial.print("Bmin: "); Serial.print(GLB_BMIN, DEC); Serial.print(" ");
   Serial.print("Cmin: "); Serial.print(GLB_CMIN, DEC); Serial.print(" ");
   Serial.println(" ");
+  */
   if (SEC_COUNT == 3000) {  // 1 minute
     RPM = REV_COUNT;   // RPM calculation
     SEC_COUNT = 0;
@@ -104,10 +141,16 @@ void setup(void) {
   pinMode(8, OUTPUT);
   digitalWrite(8, LOW);
   //attachInterrupt(digitalPinToInterrupt(HALL_SENSOR_PIN), HALL_SENSOR_ISR, FALLING);
+  BIN1 = new Bins();
+  BIN2 = new Bins();
+  BIN3 = new Bins();
+  BIN4 = new Bins();
+  BIN5 = new Bins();
 }
 
 void loop(void) {
-
+  // Read in the first 5 colors of the Skittles in order to determine bin assignment
+  //BIN1.SET_BIN_COLOR(BLUE);
   
 }
 
