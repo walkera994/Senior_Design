@@ -10,11 +10,6 @@
 boolean COLOR_SENSOR_INITIALIZE(void)
 {
   uint8_t LOCAL_ID_CHECK = 0;
-  //pinMode(COLOR_SENSOR_POWER_PIN, OUTPUT); // Power Pin for sensor
-  pinMode(9, OUTPUT);  // Power pin for LED
-  analogWriteResolution(12); //12 bit PWM
-  analogWrite(0, 64); //Duty Cycle = 64/(2^12-1)
-  //digitalWrite(COLOR_SENSOR_POWER_PIN, HIGH); //Turn on power for sensor
   Wire.begin();
   LOCAL_ID_CHECK = COLOR_SENSOR_READ_BYTES(COLOR_SENSOR_ADDRESS, 1);  
   if (!((LOCAL_ID_CHECK = 0x44) || (LOCAL_ID_CHECK = 0x10)))
@@ -33,16 +28,6 @@ boolean COLOR_SENSOR_INITIALIZE(void)
   COLOR_SENSOR_WRITE_BYTE(COLOR_SENSOR_REGISTER_AIHTH, COLOR_SENSOR_AIHTH);
   return true;
 }
-
-void COLOR_SENSOR_POWER_OFF (void)
-{
-  //pinMode(COLOR_SENSOR_POWER_PIN, OUTPUT); 
-  //pinMode(COLOR_SENSOR_LED_PIN, OUTPUT); 
-  analogWriteResolution(12);
-  //digitalWrite(COLOR_SENSOR_POWER_PIN, LOW);
-  //analogWrite(COLOR_SENSOR_LED_PIN, 0);
-}
-
 
 /**************************************************************************/
 /*!
@@ -104,8 +89,7 @@ uint16_t COLOR_SENSOR_READ_BYTES(uint8_t COLOR_SENSOR_ADDRESS_TO_READ, uint8_t C
 
 }
 
-
-void COLOR_SENSOR_READ_COLOR_DATA(uint16_t *GLB_RED, uint16_t *GBL_GREEN, uint16_t *GBL_BLUE, uint16_t *GBL_CLEAR)
+void COLOR_SENSOR_READ_COLOR_DATA(volatile uint16_t *GLB_RED, volatile uint16_t *GBL_GREEN, volatile uint16_t *GBL_BLUE, volatile uint16_t *GBL_CLEAR)
 {  
   *GLB_RED = COLOR_SENSOR_READ_BYTES(COLOR_SENSOR_RDATAL, 2);
   *GBL_GREEN = COLOR_SENSOR_READ_BYTES(COLOR_SENSOR_GDATAL, 2);
@@ -113,27 +97,4 @@ void COLOR_SENSOR_READ_COLOR_DATA(uint16_t *GLB_RED, uint16_t *GBL_GREEN, uint16
   *GBL_CLEAR = COLOR_SENSOR_READ_BYTES(COLOR_SENSOR_CDATAL, 2);
 }
 
-
-
-void COLOR_SENSOR_SET_INTERRUPT(boolean INTERRUPT_ENABLE)
-{
-  uint8_t LOCAL_TEMP_REGISTER_VALUE = COLOR_SENSOR_READ_BYTES(COLOR_SENSOR_ENABLE_REGISTER, 1);
-  if (INTERRUPT_ENABLE) {
-    LOCAL_TEMP_REGISTER_VALUE |= COLOR_SENSOR_ENABLE_AIEN;
-  } else {
-    LOCAL_TEMP_REGISTER_VALUE &= ~COLOR_SENSOR_ENABLE_AIEN;
-  }
-  COLOR_SENSOR_WRITE_BYTE(COLOR_SENSOR_ENABLE_REGISTER, LOCAL_TEMP_REGISTER_VALUE);
-}
-
-void COLOR_SENSOR_RESET_INTERRUPT_FLAG(void) 
-{
-  Wire.beginTransmission(COLOR_SENSOR_ADDRESS);
-  #if ARDUINO >= 100
-  Wire.write(COLOR_SENSOR_COMMAND_BIT | 0x66);
-  #else
-  Wire.send(COLOR_SENSOR_COMMAND_BIT | 0x66);
-  #endif
-  Wire.endTransmission();
-}
 

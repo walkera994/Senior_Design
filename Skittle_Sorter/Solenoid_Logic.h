@@ -19,6 +19,6 @@
 
 
 void SOLENOID_LOGIC_ACTUATE_SOLENOID(uint8_t SOLENOID_NUMBER);
-static void tc_waveform_initialize(void);
+boolean PHOTO_RESISTOR_READ(uint8_t COLOR);
 
 #endif

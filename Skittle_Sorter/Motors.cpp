@@ -1,0 +1,128 @@
+
+#ifdef __AVR
+  #include <avr/pgmspace.h>
+#elif defined(ESP8266)
+  #include <pgmspace.h>
+#endif
+#include <stdlib.h>
+#include "Motors.h"
+
+
+
+volatile uint8_t MOTOR_SERVO_FLAG = 0;
+//volatile uint8_t MOTOR_BELT_FLAG = 0;
+
+volatile uint16_t MOTOR_SERVO_HALL_COUNT = 0;
+//volatile uint16_t MOTOR_BELT_HALL_COUNT = 0;
+
+volatile uint16_t MOTOR_SERVO_ROTATION = 0;
+//volatile uint16_t MOTOR_BELT_ROTATION = 0;
+
+volatile uint16_t MOTOR_SERVO_SPEED = 0;
+volatile uint16_t MOTOR_BELT_SPEED = 0; 
+
+volatile uint16_t MOTOR_SERVO_DUTY_CYCLE = 0;
+volatile uint16_t MOTOR_BELT_DUTY_CYCLE = 0;
+
+volatile uint32_t MOTOR_SERVO_CURRENT_TIME = 0;
+//volatile uint32_t MOTOR_BELT_CURRENT_TIME = 0; 
+
+volatile uint32_t MOTOR_SERVO_PREVIOUS_TIME = 0;
+//volatile uint32_t MOTOR_BELT_PREVIOUS_TIME = 0; 
+
+volatile uint16_t TEST = 0; 
+
+void MOTORS_INIT() {
+  pinMode(MOTOR_SERVO_PIN, OUTPUT);
+  pinMode(MOTOR_SERVO_HALL_PIN, INPUT);
+  pinMode(MOTOR_BELT_PIN, OUTPUT);
+  pinMode(MOTOR_BELT_HALL_PIN, INPUT);
+  MOTOR_SERVO_DUTY_CYCLE =  MOTOR_SERVO_START_DUTY_CYCLE;
+  MOTOR_BELT_DUTY_CYCLE = MOTOR_BELT_START_DUTY_CYCLE;
+  analogWrite(MOTOR_SERVO_PIN, MOTOR_SERVO_DUTY_CYCLE);
+  analogWrite(MOTOR_BELT_PIN, MOTOR_BELT_DUTY_CYCLE);
+  MOTOR_SERVO_CURRENT_TIME = millis();
+  //MOTOR_BELT_CURRENT_TIME = millis();
+}
+
+void MOTOR_SERVO_HALL_DETECT() {
+  if (digitalRead(MOTOR_SERVO_HALL_PIN) == LOW) {
+    MOTOR_SERVO_HALL_COUNT++;
+  } else {
+    MOTOR_SERVO_HALL_COUNT = 0;
+    MOTOR_SERVO_FLAG = 0;
+  }
+}
+
+
+void MOTOR_SERVO_CALCULATE_SPEED() {
+  if ((MOTOR_SERVO_HALL_COUNT >= MOTOR_SERVO_MAX_HALL_COUNT) & (MOTOR_SERVO_FLAG == 0)) {
+    MOTOR_SERVO_ROTATION++;
+    MOTOR_SERVO_HALL_COUNT = 0;
+    MOTOR_SERVO_FLAG = 1;
+    if (MOTOR_SERVO_ROTATION >= MOTOR_SERVO_MAX_ROTATION) {
+      MOTOR_SERVO_PREVIOUS_TIME = MOTOR_SERVO_CURRENT_TIME; 
+      MOTOR_SERVO_CURRENT_TIME = millis();
+      MOTOR_SERVO_SPEED = (MOTOR_SERVO_CURRENT_TIME - MOTOR_SERVO_PREVIOUS_TIME) / MOTOR_SERVO_ROTATION;
+     // Serial.print(MOTOR_SERVO_SPEED); Serial.println(" ms / rotation"); 
+      MOTOR_SERVO_ROTATION = 0;
+      if (MOTOR_SERVO_SPEED < MOTOR_SERVO_MAX_SPEED) {
+        MOTOR_SERVO_DUTY_CYCLE = MOTOR_SERVO_DUTY_CYCLE - MOTOR_SERVO_HIGH_SPEED_FACTOR;
+      } else if (MOTOR_SERVO_SPEED > MOTOR_SERVO_MIN_SPEED) {
+        MOTOR_SERVO_DUTY_CYCLE = MOTOR_SERVO_DUTY_CYCLE + MOTOR_SERVO_LOW_SPEED_FACTOR;
+      }
+      if (MOTOR_SERVO_DUTY_CYCLE < MOTOR_SERVO_MIN_DUTY_CYCLE) {
+        MOTOR_SERVO_DUTY_CYCLE = MOTOR_SERVO_MIN_DUTY_CYCLE;
+      }
+      if (MOTOR_SERVO_DUTY_CYCLE > MOTOR_SERVO_MAX_DUTY_CYCLE) {
+        MOTOR_SERVO_DUTY_CYCLE = MOTOR_SERVO_MAX_DUTY_CYCLE;
+      }
+      //Serial.println(MOTOR_SERVO_DUTY_CYCLE);
+      analogWrite(MOTOR_SERVO_PIN, MOTOR_SERVO_DUTY_CYCLE);      
+    }    
+  }  
+}
+
+uint32_t MOTOR_BELT_HALL_DETECT() {
+  /*
+  if (digitalRead(MOTOR_BELT_HALL_PIN) == LOW) {
+    MOTOR_BELT_HALL_COUNT++;
+  } else {
+    MOTOR_BELT_HALL_COUNT = 0;
+    MOTOR_BELT_FLAG = 0;
+  }
+  */
+    return pulseIn(MOTOR_BELT_HALL_PIN, LOW, 7200);
+}
+
+
+void MOTOR_BELT_CALCULATE_SPEED(uint32_t MOTOR_BELT_HALL_COUNT) {
+      if (MOTOR_BELT_HALL_COUNT != 0) {
+        
+        MOTOR_BELT_SPEED = (MOTOR_BELT_HALL_COUNT*24*97)/(10000); //ms / rotation
+        //rotations = pi*18mm
+        //rotations /  motorspeed = mm/s
+        MOTOR_BELT_SPEED =(56538/MOTOR_BELT_SPEED); //mm / s
+        //18*3141/24/97 = 24.286
+        //10000/24/97 = 2872.34 ==> 2872
+        //optimized to 
+        
+        
+        
+        Serial.print(MOTOR_BELT_SPEED); Serial.println(" mm / s");
+        if (MOTOR_BELT_SPEED < MOTOR_BELT_MAX_SPEED) {
+          MOTOR_BELT_DUTY_CYCLE = MOTOR_BELT_DUTY_CYCLE - MOTOR_BELT_HIGH_SPEED_FACTOR;
+        } else if (MOTOR_BELT_SPEED > MOTOR_BELT_MIN_SPEED) {
+          MOTOR_BELT_DUTY_CYCLE = MOTOR_BELT_DUTY_CYCLE + MOTOR_BELT_LOW_SPEED_FACTOR;
+        }
+        if (MOTOR_BELT_DUTY_CYCLE < MOTOR_BELT_MIN_DUTY_CYCLE) {
+          MOTOR_BELT_DUTY_CYCLE = MOTOR_BELT_MIN_DUTY_CYCLE;
+        }
+        if (MOTOR_BELT_DUTY_CYCLE > MOTOR_BELT_MAX_DUTY_CYCLE) {
+          MOTOR_BELT_DUTY_CYCLE = MOTOR_BELT_MAX_DUTY_CYCLE;
+        }
+        Serial.println(MOTOR_BELT_DUTY_CYCLE);
+        analogWrite(MOTOR_BELT_PIN, MOTOR_BELT_DUTY_CYCLE);      
+    }  
+}
+

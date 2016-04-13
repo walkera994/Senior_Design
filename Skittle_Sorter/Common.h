@@ -1,8 +1,17 @@
 
-#define ANALOG_RESOLUTION   8
+#define ANALOG_RESOLUTION   12
+#define ISR_FREQ            100
 
 // COLOR SENSOR PARAMETERS --------------------------------------------------
 #define COLOR_SENSOR_LED_PIN              9
+
+//MOTOR_PARAMETERS -------------------------------------------
+#define MOTOR_SERVO_PIN 8
+#define MOTOR_BELT_PIN  9 
+
+#define MOTOR_SERVO_HALL_PIN  10
+#define MOTOR_BELT_HALL_PIN  11
+
 
 // SOLENOID PARAMETERS ------------------------------------------------------
 #define SOLENOID_ONE    52
@@ -11,10 +20,6 @@
 #define SOLENOID_FOUR   34
 #define SOLENOID_FIVE   28
 
-// BELT MOTOR PARAMETERS ----------------------------------------------------
-#define BELT_MOTOR_PIN 8
-#define ENCODER_PIN_A   20
-#define ENCODER_PIN_B   21
 
 // FEEDER MOTOR PARAMETERS --------------------------------------------------
 #define FEEDER_MOTOR_BRIDGE_IN_PWM 3
@@ -31,8 +36,5 @@
 #define PHOTO_RESISTOR_FOUR  4
 #define PHOTO_RESISTOR_FIVE  5
 //All LEDs will be connected to 5V
-
-// SERVO MOTOR PARAMETERS --------------------------------------------------
-#define SERVO_PIN 9
 
 
